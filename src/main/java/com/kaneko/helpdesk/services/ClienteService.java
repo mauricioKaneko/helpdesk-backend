@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kaneko.helpdesk.domain.Pessoa;
@@ -19,10 +20,13 @@ import com.kaneko.helpdesk.services.exceptions.ObjectNotFoundException;
 @Service
 public class ClienteService {
 	@Autowired
-	ClienteRepository clienteRepository;
+	private ClienteRepository clienteRepository;
 	
 	@Autowired
-	PessoaRepository pessoaRepository;
+	private PessoaRepository pessoaRepository;
+	
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 	
 	public Cliente findById(Integer id) {
 		Optional<Cliente> obj = clienteRepository.findById(id);
@@ -36,6 +40,7 @@ public class ClienteService {
 	
 	public Cliente create(ClienteDTO clienteDTO) {
 		clienteDTO.setId(null);
+		clienteDTO.setSenha(encoder.encode(clienteDTO.getSenha()));
 		validaCPFeMail(clienteDTO);
 		Cliente newCliente = new Cliente(clienteDTO);
 		return clienteRepository.save(newCliente);

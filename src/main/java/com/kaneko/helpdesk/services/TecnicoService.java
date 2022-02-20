@@ -3,6 +3,8 @@ package com.kaneko.helpdesk.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,15 @@ public class TecnicoService {
 		return tecnicoRepository.save(newTecnico);
 	}
 
+	public Tecnico update(Integer id, @Valid TecnicoDTO tecnicoDTO) {
+		tecnicoDTO.setId(id);
+		Tecnico oldTecnico = findById(id);
+		validaCPFeMail(tecnicoDTO);
+		oldTecnico = new Tecnico(tecnicoDTO);
+		
+		return tecnicoRepository.save(oldTecnico);
+	}
+
 	private void validaCPFeMail(TecnicoDTO tecnicoDTO) {
 		Optional<Pessoa> obj = pessoaRepository.findBycpf(tecnicoDTO.getCpf());
 		if(obj.isPresent() && obj.get().getId() != tecnicoDTO.getId()) {
@@ -49,7 +60,6 @@ public class TecnicoService {
 		if(obj.isPresent() && obj.get().getId() != tecnicoDTO.getId()) {
 			throw new DataIntegrationViolationException("E-mail já cadastrado no sistema");
 		}
-		
-		
 	}
+
 }

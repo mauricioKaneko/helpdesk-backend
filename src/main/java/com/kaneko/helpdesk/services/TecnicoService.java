@@ -6,15 +6,21 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kaneko.helpdesk.domain.Pessoa;
 import com.kaneko.helpdesk.domain.Tecnico;
 import com.kaneko.helpdesk.domain.dtos.TecnicoDTO;
+import com.kaneko.helpdesk.repositories.PessoaRepository;
 import com.kaneko.helpdesk.repositories.TecnicoRepository;
+import com.kaneko.helpdesk.services.exceptions.DataIntegrationViolationException;
 import com.kaneko.helpdesk.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class TecnicoService {
 	@Autowired
 	TecnicoRepository tecnicoRepository;
+	
+	@Autowired
+	PessoaRepository pessoaRepository;
 	
 	public Tecnico findById(Integer id) {
 		Optional<Tecnico> obj = tecnicoRepository.findById(id);
@@ -28,7 +34,22 @@ public class TecnicoService {
 	
 	public Tecnico create(TecnicoDTO tecnicoDTO) {
 		tecnicoDTO.setId(null);
+		validaCPFeMail(tecnicoDTO);
 		Tecnico newTecnico = new Tecnico(tecnicoDTO);
 		return tecnicoRepository.save(newTecnico);
+	}
+
+	private void validaCPFeMail(TecnicoDTO tecnicoDTO) {
+		Optional<Pessoa> obj = pessoaRepository.findBycpf(tecnicoDTO.getCpf());
+		if(obj.isPresent() && obj.get().getId() != tecnicoDTO.getId()) {
+			throw new DataIntegrationViolationException("CPF já cadastrado no sistema");
+		}
+		
+		obj = pessoaRepository.findByEmail(tecnicoDTO.getEmail());
+		if(obj.isPresent() && obj.get().getId() != tecnicoDTO.getId()) {
+			throw new DataIntegrationViolationException("E-mail já cadastrado no sistema");
+		}
+		
+		
 	}
 }

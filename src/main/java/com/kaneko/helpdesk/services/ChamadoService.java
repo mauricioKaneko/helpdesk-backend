@@ -1,7 +1,10 @@
 package com.kaneko.helpdesk.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,13 @@ public class ChamadoService {
 		return chamadoRepository.save(newChamado(chamadoDTO));
 	}
 	
+	public Chamado update(Integer id, @Valid ChamadoDTO chamadoDTO) {
+		chamadoDTO.setId(id);
+		Chamado oldChamado = findById(id);
+		oldChamado = newChamado(chamadoDTO);
+		return chamadoRepository.save(oldChamado);
+	}	
+	
 	private Chamado newChamado(ChamadoDTO obj) {
 		Tecnico tecnico = tecnicoService.findById(obj.getTecnico());
 		Cliente cliente = clienteService.findById(obj.getCliente());
@@ -46,6 +56,10 @@ public class ChamadoService {
 		Chamado chamado = new Chamado();
 		if(obj.getId() != null) {
 			chamado.setId(obj.getId());
+		}
+		
+		if(obj.getStatus().equals(2)) {
+			chamado.setDataFechamento(LocalDate.now());
 		}
 		
 		chamado.setTecnico(tecnico);
@@ -58,4 +72,6 @@ public class ChamadoService {
 		return chamado;
 		
 	}
+
+
 }

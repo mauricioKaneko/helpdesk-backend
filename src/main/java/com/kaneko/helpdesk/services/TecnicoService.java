@@ -50,6 +50,16 @@ public class TecnicoService {
 		return tecnicoRepository.save(oldTecnico);
 	}
 
+	public void delete(Integer id) {
+		Tecnico tecnico = findById(id);
+		if(tecnico.getChamados().size() > 0 ) {
+			throw new DataIntegrationViolationException("Tecnico possui ordens de serviço e não pode ser excluido");
+		}
+		tecnicoRepository.deleteById(id);
+		
+	}
+
+	
 	private void validaCPFeMail(TecnicoDTO tecnicoDTO) {
 		Optional<Pessoa> obj = pessoaRepository.findBycpf(tecnicoDTO.getCpf());
 		if(obj.isPresent() && obj.get().getId() != tecnicoDTO.getId()) {
@@ -61,5 +71,6 @@ public class TecnicoService {
 			throw new DataIntegrationViolationException("E-mail já cadastrado no sistema");
 		}
 	}
+
 
 }

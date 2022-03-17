@@ -22,7 +22,7 @@ import com.kaneko.helpdesk.domain.dtos.ChamadoDTO;
 import com.kaneko.helpdesk.services.ChamadoService;
 
 @RestController
-@RequestMapping(value = "/chamados")
+@RequestMapping(value = "/api/chamados")
 public class ChamadoResource {
 	@Autowired
 	private ChamadoService service;

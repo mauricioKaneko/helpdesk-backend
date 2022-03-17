@@ -23,7 +23,7 @@ import com.kaneko.helpdesk.domain.dtos.ClienteDTO;
 import com.kaneko.helpdesk.services.ClienteService;
 
 @RestController
-@RequestMapping(value = "/clientes")
+@RequestMapping(value = "/api/clientes")
 public class ClienteResource {
 	
 	@Autowired

@@ -24,7 +24,7 @@ import com.kaneko.helpdesk.domain.dtos.TecnicoDTO;
 import com.kaneko.helpdesk.services.TecnicoService;
 
 @RestController
-@RequestMapping(value = "/tecnicos")
+@RequestMapping(value = "/api/tecnicos")
 public class TecnicoResource {
 	
 	@Autowired
@@ -35,7 +35,7 @@ public class TecnicoResource {
 		Tecnico obj = tecnicoService.findById(id);
 		return ResponseEntity.ok().body(new TecnicoDTO(obj));
 	}
-	
+
 	@GetMapping
 	public ResponseEntity<List<TecnicoDTO>> findAll(){
 		List<Tecnico> list = tecnicoService.findAll();
